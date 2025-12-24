@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SENA – Protocolo Diario (Acta)</title>
+
+  <style>
+    :root{
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --soft: #F3F4F6;
+      --border: #E5E7EB;
+      --text: #0F172A;
+      --muted: #64748B;
+      --navy: #00324D;
+      --blue: #3863DD;
+      --blue-soft: #E8F0F8;
+      --blue-border: #D8E8F8;
+      --success: #39A917;
+      --success-bg: #F0FDF4;
+      --danger: #C4413E;
+      --danger-bg: #FEF2F2;
+      --sombra: 0 1px 3px rgba(15, 23, 42, 0.10);
+      --sombra-fuerte: 0 10px 20px rgba(15, 23, 42, 0.08);
+      --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 20px rgba(15, 23, 42, 0.06);
+      --radio: 16px;
+      --gris-fondo: var(--bg);
+      --gris-borde: var(--border);
+      --texto-principal: var(--text);
+      --texto-secundario: var(--muted);
+      --verde-sena: #22c55e;
+      --verde-sena-oscuro: #1e8a37;
+      --verde-sena-claro: #dcfce7;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--gris-fondo);
+      color: var(--texto-principal);
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 18px;
+      padding: 16px 28px;
+      background:#fff;
+      border-bottom: 4px solid var(--verde-sena);
+      box-shadow: 0 1px 3px rgba(15,23,42,.12);
+    }
+    header .brand{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 0;
+    }
+    header img{
+      height: 54px;
+      width:auto;
+      flex: 0 0 auto;
+    }
+    header .brand-title{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width:0;
+    }
+    header .brand-title .h1{
+      font-weight:800;
+      font-size: 15px;
+      line-height: 1.2;
+      margin:0;
+    }
+    header .brand-title .h2{
+      color: var(--texto-secundario);
+      font-weight:600;
+      font-size: 12px;
+      margin:0;
+    }
+    header .right{
+      text-align:right;
+      min-width: 0;
+    }
+    header .right .app{
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--verde-sena-oscuro);
+      margin:0;
+      letter-spacing: .02em;
+    }
+    header .right .sub{
+      margin: 3px 0 0 0;
+      font-size: 12px;
+      color: var(--texto-secundario);
+    }
+
+    .contenedor{
+      max-width: 1400px;
+      margin: 22px auto 40px;
+      padding: 18px 22px;
+      background:#F8F8F8;
+      border: none;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    /* ===== Overlay (login-card) ===== */
+    #loginOverlay{
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(40, 167, 69, 1), rgba(15, 23, 42, 1));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index: 999;
+      padding: 18px;
+      overflow:auto;
+    }
+
+    @keyframes loginZoomIn{
+      0%{ transform: scale(.85); opacity: 0; }
+      60%{ transform: scale(1.02); opacity: 1; }
+      100%{ transform: scale(1); opacity: 1; }
+    }
+
+    .login-card{
+  background:#fff;
+  border-radius: 12px;
+  padding: 0;
+  width: min(1400px, 98vw);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  transform-origin:center;
+  animation: loginZoomIn .35s ease-out;
+  overflow: hidden;
+}
+.login-top{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--gris-borde);
+      background:#fff;
+      margin: 0;
+    }
+    .login-top img{
+      width: 64px;
+      height:auto;
+    }
+    .login-top .titles{
+      min-width:0;
+    }
+    .login-top .titles h1{
+      margin:0;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--verde-sena-oscuro);
+      line-height:1.2;
+    }
+    .login-top .titles p{
+      margin: 2px 0 0 0;
+      font-size: 12px;
+      color: var(--texto-secundario);
+    }
+
+    .login-card form{
+  padding: 18px;
+}
+
+.grid-form{
+  display:grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px 14px;
+  margin-top: 8px;
+}
+    .field{
+      text-align:left;
+    }
+    .field label{
+      display:block;
+      margin:0 0 6px 0;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--texto-principal);
+    }
+    .field input, .field textarea, .field select{
+      width:100%;
+      border: 1px solid rgb(0, 81, 0);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      outline:none;
+      background:#fff;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus{
+      border-color: rgba(40,167,69,.65);
+      box-shadow: 0 0 0 3px rgba(40,167,69,.16);
+    }
+    .field textarea{
+      min-height: 88px;
+      resize: vertical;
+    }
+    .span-2{ grid-column: 1 / -1; }
+
+    /* Grid helpers (login) */
+.col-12{ grid-column: span 12; }
+.col-9{ grid-column: span 9; }
+.col-8{ grid-column: span 8; }
+.col-6{ grid-column: span 6; }
+.col-4{ grid-column: span 4; }
+.col-3{ grid-column: span 3; }
+.col-2{ grid-column: span 2; }
+
+.panel{
+  grid-column: span 12;
+  background: #f9fafb;
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  padding: 12px;
+}
+.faltas-panel{
+  grid-column: span 12;
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px;
+}
+.panel-grid{
+  display:grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px 12px;
+  align-items:end;
+}
+
+/* Toggle estilo switch (chkOtroInstructor) */
+.switch-label{
+  display:block;
+  margin:0 0 6px 0;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--texto-principal);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.switch-row{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--gris-borde);
+  border-radius: 12px;
+  background:#fff;
+  height: 42px;
+}
+#chkOtroInstructor{
+  appearance: none;
+  width: 38px;
+  height: 20px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  flex: 0 0 auto;
+}
+#chkOtroInstructor::before{
+  content:"";
+  position:absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background:#fff;
+  box-shadow: 0 1px 2px rgba(15,23,42,.25);
+  transition: transform .18s ease;
+}
+#chkOtroInstructor:checked{ background: var(--verde-sena); }
+#chkOtroInstructor:checked::before{ transform: translateX(18px); }
+.switch-text{
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--texto-secundario);
+}
+
+/* Inputs estilo del diseño de referencia */
+.field label{
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 12px;
+  font-weight: 500;
+}
+.field input, .field textarea, .field select{
+  height: 42px;
+}
+.field textarea{
+  height: auto;
+  min-height: 78px;
+}
+
+/* File input como dropzone simple */
+.field input[type="file"]{
+  height: auto;
+  padding: 12px;
+  border-style: dashed;
+  background: #fff;
+}
+.field input[type="file"]::file-selector-button{
+  border: 1px solid var(--gris-borde);
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+    .hint{
+      margin: 6px 0 0 0;
+      font-size: 11.5px;
+      color: var(--texto-secundario);
+      line-height: 1.35;
+    }
+
+    .radio-row{
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding: 10px 12px;
+      border: 1px solid var(--gris-borde);
+      border-radius: 12px;
+      background:#fff;
+    }
+    .radio-row label{
+      margin:0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--texto-principal);
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .radio-row input{ width: auto; }
+
+    .actions{
+      margin-top: 14px;
+      display:flex;
+      gap: 10px;
+      justify-content:flex-end;
+      flex-wrap: wrap;
+    }
+
+    /* Botones */
+    .btnEstilo{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 10px 16px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btnPrimario{
+      background: linear-gradient(to right, var(--verde-sena), var(--verde-sena-oscuro));
+      color:#0F172A;
+      border-color: rgba(16, 185, 129, 0.35);
+      box-shadow: 0 14px 28px rgba(40, 167, 69, 0.35);
+    }
+    .btnPrimario:hover{ transform: translateY(-1px); box-shadow: 0 18px 34px rgba(40, 167, 69, 0.45); }
+    .btnSecundario{
+      background:#fff;
+      color: var(--verde-sena-oscuro);
+      border-color: rgba(16, 185, 129, 0.35);
+      box-shadow: 0 3px 10px rgba(15,23,42,.08);
+    }
+    .btnSecundario:hover{ transform: translateY(-1px); box-shadow: 0 8px 16px rgba(15,23,42,.12); }
+
+    
+    .btnPDF{
+      background:#fff;
+      color:#b91c1c;
+      border-color: rgba(185, 28, 28, 0.55);
+      box-shadow: 0 3px 10px rgba(185, 28, 28, .12);
+    }
+    .btnPDF:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(185, 28, 28, .18);
+      background:#fff5f5;
+    }
+.error{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      font-size: 12px;
+      display:none;
+    }
+
+    /* ===== Resumen + Acordeón ===== */
+    .card-info{
+      margin-top: 20px;
+      border-radius: 24px;
+      overflow:hidden;
+      box-shadow: 0 30px 60px rgba(15,23,42,.12);
+      border: none;
+    }
+    .card-info .card-header{
+      background:#fff;
+      padding: 20px 32px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .card-info .card-header h3{
+      margin:0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #0F172A;
+    }
+    .card-info .card-header small{
+      display:block;
+      font-size: 12px;
+      color: #64748B;
+      margin-top: 4px;
+      text-transform:uppercase;
+      letter-spacing: .18em;
+    }
+    .card-info .header-top{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+    }
+    .card-info .header-icon{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:#E8F0F8;
+      color:#3863DD;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+    }
+    .card-info .header-actions{
+      display:flex;
+      gap:10px;
+      margin-top:12px;
+    }
+    .card-info .card-body{
+      padding: 16px;
+      background:#F8FAFC;
+      grid-template-columns: repeat(100, 1fr);
+      gap: 20px;
+      color: #0F172A;
+      font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+    }
+    .topbar{
+      background:var(--card, #ffffff);
+      border:1px solid var(--border, #E5E7EB);
+      border-left:4px solid #22c55e;
+      border-radius: 16px;
+      padding: 14px 16px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 14px;
+      box-shadow: var(--shadow, 0 1px 2px rgba(15,23,42,.06), 0 10px 20px rgba(15,23,42,.06));
+    }
+    .title{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      min-width: 260px;
+    }
+    .logo{
+      width:22px;
+      height:22px;
+      border-radius: 6px;
+      background:#22c55e;
+      position:relative;
+    }
+    .logo:after{
+      content:"";
+      position:absolute;
+      inset:5px 4px 6px 4px;
+      background:#fff;
+      clip-path: polygon(10% 20%, 75% 20%, 75% 35%, 10% 35%, 10% 20%, 10% 45%, 90% 45%, 90% 60%, 10% 60%, 10% 45%, 10% 70%, 65% 70%, 65% 85%, 10% 85%, 10% 70%);
+      opacity:.9;
+    }
+    .title h1{
+      font-size:18px;
+      margin:0;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .title .sub{
+      margin:2px 0 0;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:var(--muted, #64748B);
+    }
+    .top-actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      border:1px solid var(--border, #E5E7EB);
+      border-radius: 12px;
+      padding: 8px 12px;
+      background:#F1F5F9;
+      font-size:12px;
+      color:var(--muted, #64748B);
+      line-height:1.05;
+      min-width: 120px;
+      text-align:center;
+    }
+    .pill strong{
+      display:block;
+      color:var(--text, #0F172A);
+      font-size:14px;
+      margin-top:3px;
+      letter-spacing:.3px;
+    }
+    .pill-success{
+      border-color: rgba(57,169,23,.25);
+      background: var(--success-bg, #F0FDF4);
+      color: var(--success, #39A917);
+      font-weight:800;
+    }
+    .main-layout{
+      grid-template-columns: 1fr 360px;
+      gap: 16px;
+    }
+    @media (max-width: 1100px){
+      .main-layout{ grid-template-columns: 1fr; }
+    }
+    .card{
+      background:#ffffff;
+      border:1px solid var(--border, #E5E7EB);
+      border-radius: 16px;
+      box-shadow: var(--shadow, 0 1px 2px rgba(15,23,42,.06), 0 10px 20px rgba(15,23,42,.06));
+      overflow:hidden;
+    }
+    .card-h{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      background:#fff;
+    }
+    .card-h .left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card-h h2{
+      font-size:14px;
+      margin:0;
+      font-weight:800;
+    }
+    .muted{
+      color:var(--muted, #64748B);
+      font-size:12px;
+      margin:0;
+    }
+    .icon{
+      width:18px;
+      height:18px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+    }
+    .card-b{ padding: 16px; }
+    .two-col{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      align-items:start;
+    }
+    .klabel{
+      font-size:11px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted, #64748B);
+      font-weight:800;
+      margin:0 0 6px;
+    }
+    .value{
+      margin:0;
+      font-size:13px;
+      color:var(--text, #0F172A);
+      font-weight:600;
+      line-height:1.35;
+    }
+    .people{
+      display:grid;
+      gap: 12px;
+    }
+    .person{
+      border:1px solid var(--border, #E5E7EB);
+      border-radius: 12px;
+      padding: 12px;
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      background:#fff;
+    }
+    .avatar{
+      width:38px;
+      height:38px;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      letter-spacing:.5px;
+      color:#fff;
+      background: var(--navy, #00324D);
+      flex:0 0 38px;
+      font-size:12px;
+    }
+    .avatar.soft{
+      background:#E2E8F0;
+      color:#0F172A;
+    }
+    .pname{ margin:0; font-size:13px; font-weight:800; }
+    .prole{ margin:2px 0 0; font-size:11px; color:var(--muted, #64748B); }
+    .taglist{
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border:1px solid var(--border, #E5E7EB);
+      background:#fff;
+      font-size:11px;
+      color:var(--text, #0F172A);
+      font-weight:600;
+    }
+    .absence-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap:12px;
+    }
+    .absence-card{
+      border:1px solid var(--border, #E5E7EB);
+      border-radius: 12px;
+      padding: 10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      background:#ffffff;
+    }
+    .absence-avatar{
+      width:32px;
+      height:32px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      letter-spacing:.8px;
+      background:#E2E8F0;
+      color:#0F172A;
+    }
+    .absence-info p{
+      margin:0;
+      font-weight:600;
+    }
+    .panel-card .panel-body{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      padding: 0 16px 16px;
+    }
+    .panel-row{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--soft, #F3F4F6);
+    }
+    .panel-row:last-child{ border-bottom:none; }
+    .panel-row strong{
+      font-size:16px;
+      color:var(--text, #0F172A);
+      font-weight:700;
+    }
+    .panel-row.small{
+      font-size:12px;
+    }
+    .card-info #programaFormacion,
+    .card-info #competencia,
+    .card-info #instGerente,
+    .card-info #instTransversal,
+    .card-info #ambienteFormacion,
+    .card-info #ciudad,
+    .card-info #temaPrincipal,
+    .card-info #aprProtocolante,
+    .card-info #nombresFaltaron,
+    .card-info .assist-item,
+    .login-card #programaFormacion,
+    .login-card #competencia,
+    .login-card #instGerente,
+    .login-card #instTransversal,
+    .login-card #ambienteFormacion,
+    .login-card #ciudad,
+    .login-card #temaPrincipal,
+    .login-card #aprProtocolante,
+    .login-card #nombresFaltaron,
+    .login-card .assist-item,
+    .contenedor #programaFormacion,
+    .contenedor #competencia,
+    .contenedor #instGerente,
+    .contenedor #instTransversal,
+    .contenedor #ambienteFormacion,
+    .contenedor #ciudad,
+    .contenedor #temaPrincipal,
+    .contenedor #aprProtocolante,
+    .contenedor #nombresFaltaron,
+    .contenedor .assist-item{
+      text-transform: uppercase;
+      font-weight:600;
+      letter-spacing: .08em;
+      color:#0F172A;
+    }
+    .resumen-dashboard{
+      grid-column: span 100;
+      display:grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+    .resumen-main{
+      grid-column: span 4;
+      display:grid;
+      gap: 16px;
+    }
+    .resumen-panel{
+      grid-column: span 3;
+      display:grid;
+      gap: 16px;
+    }
+    .summary-card{
+      background:#FFFFFF;
+      border-radius: 18px;
+      border: 1px solid #E5E7EB;
+      padding: 18px 20px;
+      box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 6px 16px rgba(15,23,42,.06);
+      min-height: 140px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .summary-card h4{
+      margin:0 0 6px 0;
+      font-size: 14px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#64748B;
+      font-weight:600;
+    }
+    .summary-card p{
+      margin:0;
+      line-height:1.6;
+      color:#0F172A;
+    }
+    .badge-chip{
+      display:inline-flex;
+      padding: 4px 12px;
+      background:#E8F0F8;
+      border-radius: 999px;
+      border: 1px solid #D8E8F8;
+      font-size: 12px;
+      font-weight:600;
+      color:#3863DD;
+    }
+    .badge-pill{
+      background:#F0FDF4;
+      border-radius: 12px;
+      border: 1px solid #BBE9CA;
+      color:#0F9D4C;
+      padding: 4px 10px;
+      font-size:12px;
+      font-weight:600;
+    }
+    .dashboard-panel{
+      background:#FFFFFF;
+      border-radius: 18px;
+      border: 1px solid #E5E7EB;
+      overflow:hidden;
+    }
+    .panel-header{
+      background:#00324D;
+      color:#FFFFFF;
+      padding: 22px;
+      text-align:center;
+    }
+    .panel-header .date{
+      font-size: 32px;
+      font-weight:700;
+      line-height:1;
+    }
+    .panel-header small{
+      font-size: 12px;
+      letter-spacing: .2em;
+      text-transform:uppercase;
+      display:block;
+      margin-top:6px;
+    }
+    .panel-body{
+      padding: 16px 20px 24px;
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
+    }
+    .panel-row{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .panel-row span{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.15em;
+      color:#64748B;
+    }
+    .panel-row strong{
+      font-size:16px;
+      color:#0F172A;
+    }
+    .panel-row small{
+      font-size:12px;
+      color:#64748B;
+    }
+    .panel-row .accent-text{
+      color:#68BAE2;
+      font-weight:600;
+      font-size: 13px;
+    }
+    .profile-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #E5E7EB;
+      background:#F9FAFB;
+    }
+    .avatar-circle{
+      width:36px;
+      height:36px;
+      border-radius:50%;
+      background:#E0E7FF;
+      color:#0F172A;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+    }
+    .profile-info{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .profile-info strong{
+      font-size: 15px;
+      color:#0F172A;
+    }
+    .profile-info small{
+      font-size: 12px;
+      color:#64748B;
+    }
+    .chips-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .chip-pastel{
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight:600;
+      color:#3863DD;
+      background:#E8F0F8;
+      border:1px solid #D8E8F8;
+    }
+    .alert-pill{
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight:600;
+      background:#FEF2F2;
+      color:#C4413E;
+      border:1px solid #FECACA;
+      margin-left:auto;
+    }
+    .absence-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .absence-card{
+      background:#FFFFFF;
+      border-radius:14px;
+      border:1px solid #E5E7EB;
+      padding:12px 16px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .absence-avatar{
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background:#E0E7FF;
+      color:#0F172A;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .absence-info p{
+      margin:0;
+      font-size:13px;
+      color:#0F172A;
+      font-weight:600;
+    }
+    .absence-info small{
+      color:#64748B;
+      font-size:11px;
+    }
+    .kv{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+    }
+    .kv .k{
+      font-weight: 800;
+      color: var(--texto-secundario);
+      min-width: 160px;
+    }
+    .kv .v{
+      font-weight: 600;
+      color: var(--texto-principal);
+      white-space: pre-wrap;
+    }
+
+    .acordeon-header{
+      width: 100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--gris-borde);
+      background:#f9fafb;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--texto-principal);
+      cursor:pointer;
+      margin-top: 18px;
+    }
+    .acordeon-header:hover{ background: var(--verde-sena-claro); }
+    .acordeon-icon{ font-size: 16px; }
+
+    .acordeon-body{
+      margin-top: 14px;
+      border: 1px solid var(--gris-borde);
+      border-radius: 14px;
+      padding: 14px;
+      background:#fff;
+      display:none;
+    }
+    .acordeon-body.open{ display:block; }
+
+    .section-title{
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      color: var(--texto-secundario);
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .textarea{
+      width:100%;
+      border: 1px solid var(--gris-borde);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      min-height: 96px;
+      outline:none;
+      resize: vertical;
+      background:#fff;
+    }
+    .textarea:focus{
+      border-color: rgba(40,167,69,.65);
+      box-shadow: 0 0 0 3px rgba(40,167,69,.16);
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 14px;
+    }
+    @media (max-width: 900px){
+      .grid-form{ grid-template-columns: 1fr; }
+      .grid-2{ grid-template-columns: 1fr; }
+      .kv .k{ min-width: 140px; }
+      header{ padding: 14px 16px; }
+      .contenedor{ margin: 16px 12px 30px; }
+    }
+
+    .compromisos-default{
+      border: 1px solid var(--gris-borde);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #f9fafb;
+      font-size: 13px;
+      color: var(--texto-principal);
+      margin-bottom: 10px;
+    }
+    .compromisos-default ol{
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+    .compromisos-default li{ margin: 6px 0; }
+    .compromisos-default ul{ margin: 6px 0 6px 18px; }
+
+    .extra-items{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .extra-item{
+      display:flex;
+      gap: 8px;
+      align-items:flex-start;
+    }
+    .extra-item textarea{
+      flex:1 1 auto;
+      min-height: 52px;
+    }
+    .btnMini{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--gris-borde);
+      background:#fff;
+      cursor:pointer;
+      font-weight: 800;
+      color: #b91c1c;
+    }
+    .btnMini:hover{ background:#fff5f5; }
+
+    .chkRow{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .chkRow input[type="checkbox"]{ width:16px; height:16px; }
+    .chkRow label{ margin:0; font-weight: 700; cursor:pointer; }
+
+
+    .assist-items{
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .assist-item{
+      display:grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items:start;
+    }
+    .assist-item input{ width:100%; }
+    .assist-items input,
+    .assist-items textarea{
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .assist-item button{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--gris-borde);
+      background:#fff;
+      cursor:pointer;
+      font-weight: 800;
+      color:#b91c1c;
+      height: 42px;
+    }
+    .assist-item button:hover{ background:#fff5f5; }
+    @media (max-width: 900px){
+      .assist-item{ grid-template-columns: 1fr; }
+      .assist-item button{ width: 100%; }
+    }
+
+    .footer-actions{
+      margin-top: 16px;
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .muted-note{
+      margin: 10px 0 0 0;
+      font-size: 12px;
+      color: var(--texto-secundario);
+      line-height: 1.4;
+    }
+    .footer-card{
+      margin-top: 18px;
+      background:#fff;
+      border-radius: 20px;
+      border:1px solid rgba(148, 163, 184, 0.35);
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .footer-card .footer-title{
+      margin:0;
+      text-align:center;
+      font-size: 10px;
+      letter-spacing: .3em;
+      text-transform:uppercase;
+      color:#94a3b8;
+    }
+    .footer-body{
+      width:100%;
+      background:#f8fafc;
+      border-radius: 28px;
+      padding: 10px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      box-shadow: inset 0 1px 2px rgba(15,23,42,.04);
+    }
+    .footer-icon{
+      width:34px;
+      height:34px;
+      border-radius: 999px;
+      background:#f87171;
+      color:#fff;
+      font-weight:800;
+      display:grid;
+      place-items:center;
+    }
+    .footer-body strong{
+      margin:0;
+      font-size:14px;
+      color:#0f172a;
+      letter-spacing:0;
+    }
+    .footer-body span{
+      font-size:12px;
+      color:#64748b;
+      display:block;
+    }
+    .footer-action{
+      width:36px;
+      height:36px;
+      border-radius:999px;
+      border:1px solid #dbeafe;
+      background:#fff;
+      color:#1d4ed8;
+      display:grid;
+      place-items:center;
+      font-size:16px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">
+      <img alt="Logo SENA" src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" />
+      <div class="brand-title">
+        <p class="h1">Servicio Nacional de Aprendizaje – SENA</p>
+        <p class="h2">Centro de Comercio y Servicios</p>
+      </div>
+    </div>
+    <div class="right">
+      <p class="app">Protocolo de Sesion</p>
+        </div>
+  </header>
+
+  <!-- Overlay (login-card) -->
+  <div id="loginOverlay" aria-modal="true" role="dialog">
+    <div class="login-card">
+      <div class="login-top">
+        <img alt="Logo SENA" src="https://www.sena.edu.co/Style%20Library/alayout/images/logoSena.png" />
+        <div class="titles">
+          <h1>Registro de Protocolo Diario</h1>
+          <p>Diligencie los datos iniciales para habilitar el acta.</p>
+        </div>
+      </div>
+
+      <form id="formInicial">
+        <div class="grid-form">
+  <div class="field col-9">
+    <label for="programaFormacion">PROGRAMA DE FORMACIÓN</label>
+    <input id="programaFormacion" list="programasList" type="text" placeholder="Ingrese el nombre del programa" required />
+    <datalist id="programasList"></datalist>
+    <input type="file" accept=".csv" id="programasFile" style="display:none;" />
+     </div>
+
+  <div class="field col-3">
+    <label for="numFicha">NO. FICHA</label>
+    <input id="numFicha" type="text" placeholder="Ej: 2699999" required />
+  </div>
+
+  <div class="field col-6">
+    <label for="competencia">COMPETENCIA</label>
+    <input id="competencia" list="competenciasList" type="text" placeholder="Competencia del día" required />
+    <datalist id="competenciasList"></datalist>
+  </div>
+
+      <div class="field col-6">
+        <label for="instGerente">INSTRUCTOR GERENTE</label>
+        <input id="instGerente" list="instructoresList" type="text" placeholder="Nombre completo" required />
+        <datalist id="instructoresList"></datalist>
+      </div>
+
+  <div class="panel col-12">
+    <div class="panel-grid">
+      <div class="toggle-field col-3">
+        <label class="switch-label" for="chkOtroInstructor">OTRO INSTRUCTOR IMPARTE</label>
+        <div class="switch-row">
+          <input type="checkbox" id="chkOtroInstructor" />
+          <span class="switch-text">Otro instructor imparte</span>
+        </div>
+      </div>
+
+      <div class="field col-3">
+        <label for="instTransversal">IMPARTIDA POR EL INSTRUCTOR</label>
+        <input id="instTransversal" list="instructoresList" type="text" placeholder="Nombre del instructor encargado" />
+      </div>
+
+      <div class="field col-2">
+        <label for="fecha">FECHA</label>
+        <input id="fecha" type="date" required />
+      </div>
+
+      <div class="field col-2">
+        <label for="horaInicio">INICIO</label>
+        <input id="horaInicio" type="time" required />
+      </div>
+
+      <div class="field col-2">
+        <label for="horaFin">FIN</label>
+        <input id="horaFin" type="time" required />
+      </div>
+    </div>
+  </div>
+
+  <div class="field col-3">
+    <label for="ciudad">CIUDAD</label>
+    <input id="ciudad" type="text" placeholder="IBAGUÉ" value="IBAGUÉ" />
+    <p class="hint">Por defecto <strong>IBAGUÉ</strong>, pero puede borrarla.</p>
+  </div>
+
+  <div class="field col-6">
+    <label for="ambienteFormacion">AMBIENTE DE FORMACIÓN</label>
+    <input id="ambienteFormacion" type="text" placeholder="Ej: Ambiente 2040D" required />
+  </div>
+
+  <div class="field col-3">
+    <label for="aprMatriculados">APRENDICES MATRICULADOS</label>
+    <input id="aprMatriculados" type="number" min="0" step="1" placeholder="0" />
+  </div>
+
+  <div class="field col-9">
+    <label for="temaPrincipal">TEMA PRINCIPAL DE LA SESIÓN</label>
+    <input id="temaPrincipal" type="text" placeholder="Ingrese el tema principal" required />
+  </div>
+
+  <div class="field col-3">
+    <label for="aprProtocolante">APRENDIZ PROTOCOLANTE</label>
+    <input id="aprProtocolante" type="text" placeholder="Nombre completo" required />
+  </div>
+
+  <div class="faltas-panel col-12">
+    <div class="panel-grid">
+      <div class="field col-3">
+        <label for="cantFaltaron">APRENDICES QUE FALTARON</label>
+        <input id="cantFaltaron" type="number" min="0" step="1" placeholder="0" />
+        <p class="hint">Ningún aprendiz reportado como inasistente.</p>
+      </div>
+
+      <div class="field col-9">
+        <label for="nombresFaltaron">NOMBRE DE APRENDICES QUE FALTARON</label>
+        <textarea id="nombresFaltaron" placeholder="Un nombre por línea"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="field col-6">
+    <label>ASISTENTE ADICIONAL</label>
+    <div class="radio-row">
+      <label><input type="radio" name="huboAsistente" value="no" checked> No</label>
+      <label><input type="radio" name="huboAsistente" value="si"> Sí</label>
+    </div>
+
+    <div id="asistenteBox" style="display:none; margin-top:10px;">
+      <div class="section-title" style="margin-bottom:6px;">Datos de asistentes adicionales</div>
+      <div class="assist-items" id="assistItems"></div>
+
+      <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button type="button" class="btnEstilo btnSecundario" id="btnAgregarAsistente">+ Agregar asistente</button>
+        <button type="button" class="btnEstilo btnSecundario" id="btnLimpiarAsistentes">Limpiar asistentes</button>
+      </div>
+
+      <p class="hint">Si marca “Sí”, agregue al menos un asistente con <strong>nombre y cargo</strong>.</p>
+    </div>
+  </div>
+
+  <div class="field col-6">
+    <label for="anexoFotos">ANEXO FOTOGRÁFICO (OPCIONAL)</label>
+    <input id="anexoFotos" type="file" accept="image/*" multiple />
+    <p class="hint">Puede seleccionar una o varias imágenes. Se incluirán en la sección <strong>ANEXOS</strong> del documento Word.</p>
+  </div>
+</div>
+
+<div class="actions">
+          <button type="button" class="btnEstilo btnSecundario" id="btnLimpiar">Limpiar</button>
+          <button type="submit" class="btnEstilo btnPrimario" id="btnContinuar">Continuar</button>
+        </div>
+
+        <div class="error" id="msgError">Por favor complete los campos obligatorios marcados.</div>
+      </form>
+    </div>
+  </div>
+
+  <main class="contenedor" id="app" style="display:none;">
+    <div class="card-info" id="resumenCard">
+      <div class="card-body" id="resumenBody"></div>
+    </div>
+
+    <button class="acordeon-header" id="toggleAcordeon" type="button">
+      <span>🧾 Registro del día</span>
+      <span class="acordeon-icon" id="iconAcordeon">▾</span>
+    </button>
+
+    <section class="acordeon-body open" id="bodyAcordeon">
+      <div class="grid-2">
+        <div>
+          <div class="section-title">Reflexión inicial (Activador)</div>
+          <textarea class="textarea" id="reflexionInicial" placeholder="Escriba la reflexión inicial..."></textarea>
+        </div>
+        <div>
+          <div class="section-title">Actividades desarrolladas (Desarrollo de la sesión)</div>
+          <textarea class="textarea" id="actividadesDesarrolladas" placeholder="Describa las actividades..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="section-title">Conclusiones</div>
+        <textarea class="textarea" id="conclusiones" placeholder="Escriba las conclusiones..."></textarea>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="section-title">Compromisos diarios</div>
+
+        <div class="compromisos-default" id="compromisosDefault">
+          <div style="font-weight:800; color:var(--verde-sena-oscuro); margin-bottom:6px;">Compromisos base (se incluyen automáticamente en el acta)</div>
+          <ol>
+            <li>Presentación personal: Portar de forma decorosa el uniforme según horario establecido.</li>
+            <li>Ambientes de formación: Conservar y mantener en buen estado, orden y aseo los ambientes de formación.</li>
+            <li>Aseo personal: Presentar siempre las mejores condiciones de aseo y pulcritud personal.</li>
+            <li>Expresiones: No usar expresiones grotescas en cualquier actividad y mucho respeto.</li>
+            <li>Cumplimientos: Cumplir con los trabajos asignados por los instructores y enviarlos puntualmente.</li>
+            <li>Cursos: Debemos realizar los cursos de emprendimiento y de habilidades digitales, ya que son obligatorios para poder culminar nuestra formación.</li>
+            <li>Ahorro de energía: Puntos a tener en cuenta para el ahorro de energía dentro del ambiente de formación:
+              <ul>
+                <li>No encender los equipos de cómputo sin que se esté desarrollando alguna actividad que lo requiera.</li>
+                <li>No encender el aire acondicionado si no se requiere.</li>
+                <li>No cargar los celulares en los ambientes de formación.</li>
+                <li>No dejar conectados los computadores a la corriente, si no se requiere carga o no esté en uso.</li>
+                <li>No dejar encendidas las luces del ambiente en el tiempo destinado para el (los) break.</li>
+              </ul>
+            </li>
+          </ol>
+        </div>
+
+        <div class="section-title" style="margin-top:10px;">Compromisos diarios adicionales (opcional)</div>
+        <div class="extra-items" id="extraItems"></div>
+
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button type="button" class="btnEstilo btnSecundario" id="btnAgregarCompromiso">+ Agregar compromiso</button>
+          <button type="button" class="btnEstilo btnSecundario" id="btnLimpiarCompromisos">Limpiar adicionales</button>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button type="button" class="btnEstilo btnSecundario" id="btnEditarDatos">Editar datos iniciales</button>
+        <button type="button" class="btnEstilo btnPrimario" id="btnProtocolo">Protocolo (Word)</button>
+        <button type="button" class="btnEstilo btnPDF" id="btnProtocoloPDF">Protocolo (PDF)</button>
+      </div>
+
+      <p class="muted-note">
+        Nota: El botón <strong>Protocolo (Word)</strong> genera un documento en Word que puede guardar o abrir en su editor preferido.
+      </p>
+
+      <div class="footer-card">
+        <p class="footer-title">Diseño y desarrollo</p>
+        <div class="footer-body">
+          <div class="footer-icon">×</div>
+          <div>
+            <strong>Instructor Diseñador</strong>
+            <span>Yeison Castellanos Gordillo</span>
+          </div>
+          <div class="footer-action" aria-hidden="true">⚙</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ===== Utilidades =====
+    const $ = (id) => document.getElementById(id);
+    const PROGRAMAS_CSV_URL = "https://r.jina.ai/https://docs.google.com/spreadsheets/d/e/2PACX-1vQgGCfNa6H2MWGHy_JU7RWC5xglLVhcTTReLva_usAq6lLnza1E2Fq4xfouFGOic-9zBQlkpVucVR08/pub?gid=0&single=true&output=csv";
+    const INSTRUCTORES_CSV_URL = "https://r.jina.ai/https://docs.google.com/spreadsheets/d/e/2PACX-1vRjtVJLFo5wf5_CI-xW4jYkpnxkhCU0Y2dSCqP378XxZZ_ah_WGYKC38kOTaKzBKKliMITKXmuYnwpu/pub?output=csv";
+    async function loadProgramasList(){
+      try{
+        const res = await fetch(PROGRAMAS_CSV_URL);
+        if(!res.ok) throw new Error("No se pudo descargar el listado");
+        const text = await res.text();
+        fillProgramasListFromText(text);
+      } catch(err){
+        console.warn("No se pudo cargar la lista de programas", err);
+      }
+    }
+
+    function fillProgramasListFromText(text){
+      const target = $("programasList");
+      if(!target) return;
+      target.innerHTML = "";
+      const rows = (text || "")
+        .split(/\r?\n/)
+        .map(r => r.trim())
+        .filter(Boolean)
+        .map(r => {
+          if(r.startsWith("Title:")) return "";
+          if(r.startsWith("URL Source:")) return "";
+          if(r.startsWith("Markdown Content:")) return "";
+          return r;
+        })
+        .filter(Boolean);
+      const values = new Set();
+      rows.forEach((row, idx) => {
+        if(idx === 0 && /programa/i.test(row)) return;
+        if(!row || values.has(row)) return;
+        values.add(row);
+        const option = document.createElement("option");
+        option.value = row;
+        target.appendChild(option);
+      });
+    }
+
+    async function loadInstructoresList(){
+      try{
+        const res = await fetch(INSTRUCTORES_CSV_URL);
+        if(!res.ok) throw new Error("No se pudo descargar la lista de instructores");
+        const text = await res.text();
+        fillInstructoresListFromText(text);
+      } catch(err){
+        console.warn("No se pudo cargar la lista de instructores", err);
+      }
+    }
+
+    function fillInstructoresListFromText(text){
+      const target = $("instructoresList");
+      if(!target) return;
+      target.innerHTML = "";
+      const rows = (text || "")
+        .split(/\r?\n/)
+        .map(r => r.trim())
+        .filter(Boolean)
+        .map(r => {
+          if(r.startsWith("Title:")) return "";
+          if(r.startsWith("URL Source:")) return "";
+          if(r.startsWith("Markdown Content:")) return "";
+          return r;
+        })
+        .filter(Boolean);
+      const values = new Set();
+      rows.forEach((row, idx) => {
+        if(idx === 0 && /nombre/i.test(row)) return;
+        if(!row || values.has(row)) return;
+        values.add(row);
+        const option = document.createElement("option");
+        option.value = row;
+        target.appendChild(option);
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadProgramasList();
+      loadInstructoresList();
+      const fileInput = $("programasFile");
+      const trigger = $("loadCsvLink");
+      if(trigger && fileInput){
+        trigger.addEventListener("click", (evt) => {
+          evt.preventDefault();
+          fileInput.click();
+        });
+        fileInput.addEventListener("change", async (evt) => {
+          const file = evt.target.files?.[0];
+          if(!file) return;
+          const text = await file.text();
+          fillProgramasListFromText(text);
+        });
+      }
+    });
+
+    function escapeHTML(str){
+      return (str || "")
+        .toString()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function safeText(value){
+      if(value === null || value === undefined) return "";
+      const text = typeof value === "string" ? value.trim() : String(value);
+      return escapeHTML(text);
+    }
+
+    function formatDateISOToES(iso){
+      if(!iso) return "";
+      const [y,m,d] = iso.split("-").map(Number);
+      if(!y || !m || !d) return iso;
+      const dt = new Date(y, m-1, d);
+      return dt.toLocaleDateString("es-CO", { year:"numeric", month:"long", day:"2-digit" });
+    }
+
+    function parseISODate(iso){
+      const v = (iso || "").trim();
+      if(!v) return null;
+      const parts = v.split("-").map(Number);
+      if(parts.length !== 3) return null;
+      const [y,m,d] = parts;
+      if(!y || !m || !d) return null;
+      return new Date(y, m - 1, d);
+    }
+
+    function formatFechaLarga(iso){
+      const dt = parseISODate(iso);
+      if(!dt) return (iso || "").trim() || "-";
+      const dias = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+      const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+      const weekday = dias[dt.getDay()] || "";
+      const day = dt.getDate();
+      const month = meses[dt.getMonth()] || "";
+      const year = dt.getFullYear();
+      return `${weekday}, ${day} de ${month} ${year}`;
+    }
+
+    const absenceAvatarPalette = [
+      "#E0F2FE", "#FFE4E6", "#FEF9C3", "#DCFCE7", "#EDE9FE",
+      "#FFEDD5", "#CFFAFE", "#FCE7F3", "#E2E8F0", "#D1FAE5",
+      "#F1F5F9", "#E0E7FF", "#ECFCCB", "#F3E8FF", "#FEE2E2",
+      "#DBEAFE", "#FAE8FF"
+    ];
+
+
+    function getInitials(text){
+      if(!text) return "NA";
+      const words = (text || "").trim().split(/\s+/);
+      if(words.length === 1) return words[0].substring(0,2).toUpperCase();
+      return (words[0][0] + (words[1][0] || "")).toUpperCase();
+    }
+
+    function formatHora(hhmm){
+      return (hhmm || "").trim() || "-";
+    }
+
+    function toFechaDMY(iso){
+      const v = (iso || "").trim();
+      if(!v) return "-";
+      const parts = v.split("-");
+      if(parts.length !== 3) return v;
+      const [y,m,d] = parts;
+      return `${d}/${m}/${y}`;
+    }
+
+    function buildActaTimestamp(d){
+      const now = new Date();
+      const datePart = (() => {
+        const src = (d && d.fecha && d.fecha.trim()) ? d.fecha.trim() : `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+        const [y,m,d2] = src.split("-");
+        if(!y || !m || !d2) return `${String(now.getDate()).padStart(2,"0")}${String(now.getMonth()+1).padStart(2,"0")}${now.getFullYear()}`;
+        return `${d2}${m}${y}`;
+      })();
+      const timePart = (() => {
+        const hhmm = (d && d.horaInicio) ? (d.horaInicio || "").trim() : "";
+        const parts = hhmm.split(":");
+        const hh = parts[0] ? parts[0].padStart(2,"0") : String(now.getHours()).padStart(2,"0");
+        const mm = parts[1] ? parts[1].padStart(2,"0") : String(now.getMinutes()).padStart(2,"0");
+        const ss = String(now.getSeconds()).padStart(2,"0");
+        return `${hh}${mm}${ss}`;
+      })();
+      return `${datePart}${timePart}`;
+    }
+
+    function getExtraCompromisos(){
+      const items = [];
+      const nodes = document.querySelectorAll(".extra-item textarea");
+      nodes.forEach(t => {
+        const v = (t.value || "").trim();
+        if(v) items.push(v);
+      });
+      return items;
+    }
+
+    function getAsistentesAdicionales(){
+      const items = [];
+      const rows = document.querySelectorAll("#assistItems .assist-item");
+      rows.forEach(r => {
+        const nombre = (r.querySelector('[data-field="nombre"]')?.value || "").trim();
+        const cargo = (r.querySelector('[data-field="cargo"]')?.value || "").trim();
+        if(nombre || cargo){
+          items.push({ nombre, cargo });
+        }
+      });
+      // Solo dejamos los completamente diligenciados
+      return items.filter(x => x.nombre && x.cargo);
+    }
+
+    function buildActaNo(d){
+      const fecha = String((d && d.fecha) || "").replace(/-/g, "");
+      const hi = String((d && d.horaInicio) || "").replace(/:/g, "");
+      const ficha = String((d && d.numFicha) || "").replace(/\s+/g, "");
+      const code = [ficha, fecha, hi].filter(Boolean).join("-");
+      return code || "-";
+    }
+
+    function sanitizeForFileName(value, fallback){
+      const text = (value || "").toString().trim().toUpperCase();
+      if(!text) return fallback;
+      return text.replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "") || fallback;
+    }
+
+    function buildExportBaseName(d){
+      const fichaPart = sanitizeForFileName(d?.numFicha, "FICHA");
+      const fechaRaw = (d?.fecha || "").replace(/[^0-9]/g, "");
+      const now = new Date();
+      const fallbackFecha = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}`;
+      const fechaPart = fechaRaw || fallbackFecha;
+      let protocoloPart = sanitizeForFileName(d?.aprProtocolante || "APRENDIZ PROTOCOLANTE", "APRENDIZ_PROTOCOLANTE");
+      protocoloPart = protocoloPart.replace(/_/g, " ").trim() || "APRENDIZ PROTOCOLANTE";
+      return `PS_${fichaPart}_${fechaPart}_${protocoloPart}`;
+    }
+
+    function renderResumen(data){
+      const body = $("resumenBody");
+      if(!body) return;
+      const ficha = data.numFicha || "--";
+      const estado = data.estado || "Ejecutada";
+      const fecha = parseISODate(data.fecha);
+      const fechaCorta = data.fecha ? toFechaDMY(data.fecha) : "--";
+      const fechaLarga = data.fecha ? formatFechaLarga(data.fecha) : "Fecha";
+      const horaRange = `${formatHora(data.horaInicio)} - ${formatHora(data.horaFin)}`;
+      const ciudadValue = escapeHTML(data.ciudad || "Pendiente");
+      const ambienteValue = escapeHTML(data.ambienteFormacion || "");
+      const ubicacion = data.ciudad ? `${ciudadValue}${ambienteValue ? ` • ${ambienteValue}` : ""}` : ambienteValue || "Ubicación pendiente";
+      const ausencias = (data.nombresFaltaron || "")
+        .split("\n")
+        .map(n => n.trim())
+        .filter(Boolean);
+      const asistencias = (data.asistentesAdicionales || []).slice(0,4);
+      const evidenciaCount = (data.anexosFotos && data.anexosFotos.length) ? data.anexosFotos.length : 0;
+      const safeValue = (value, fallback = "Sin dato") => escapeHTML(value || fallback);
+
+      const absenceHtml = ausencias.length
+        ? ausencias.map((nombre, idx) => {
+            const color = absenceAvatarPalette[idx % absenceAvatarPalette.length];
+            return `
+            <div class="absence-card">
+              <div class="absence-avatar" style="background:${color};">${getInitials(nombre)}</div>
+              <div class="absence-info">
+                <p>${escapeHTML(nombre)}</p>
+                <small>Ausente</small>
+              </div>
+            </div>
+          `;
+          }).join("")
+        : `
+            <div class="absence-card">
+              <div class="absence-avatar">OK</div>
+              <div class="absence-info">
+                <p>Sin reportes</p>
+                <small>Nadie reportado</small>
+              </div>
+            </div>
+          `;
+
+      const asistenciasHtml = asistencias.length
+        ? asistencias.map(a => `<span class="tag">${escapeHTML(a.nombre)} (${escapeHTML(a.cargo)})</span>`).join("")
+        : `<span class="tag">Sin asistentes adicionales</span>`;
+
+      const mainHtml = `
+        <div class="wrap">
+            <div class="main-layout">
+            <div class="left-column">
+              <div class="card">
+                <div class="card-h">
+                  <div class="left">
+                    <span class="icon">📚</span>
+                    <div>
+                      <h2>Detalles de formación</h2>
+                      <p class="muted">Datos básicos</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-b">
+                  <div class="two-col">
+                    <div>
+                      <p class="klabel">Programa de formación</p>
+                      <p class="value" id="programaFormacion">${safeValue(data.programaFormacion)}</p>
+                    </div>
+                    <div>
+                      <p class="klabel">Competencia</p>
+                      <p class="value" id="competencia">${safeValue(data.competencia)}</p>
+                    </div>
+                    <div>
+                      <p class="klabel">Tema principal</p>
+                      <p class="value" id="temaPrincipal">${safeValue(data.temaPrincipal)}</p>
+                    </div>
+                    <div>
+                      <p class="klabel">Ciudad</p>
+                      <p class="value" id="ciudad">${safeValue(data.ciudad)}</p>
+                    </div>
+                    <div>
+                      <p class="klabel">Ambiente</p>
+                      <p class="value" id="ambienteFormacion">${safeValue(data.ambienteFormacion)}</p>
+                    </div>
+                    <div>
+                      <p class="klabel">Ficha</p>
+                      <p class="value" id="numFicha">${escapeHTML(data.numFicha || "--")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <div class="left">
+                    <span class="icon">👥</span>
+                    <div>
+                      <h2>Equipo instructor</h2>
+                      <p class="muted">Roles activos</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-b">
+                  <div class="people">
+                    <div class="person">
+                      <div class="avatar">${getInitials(data.instGerente || "Instructor")}</div>
+                      <div>
+                        <p class="pname" id="instGerente">${escapeHTML(data.instGerente || "--")}</p>
+                        <p class="prole">Instructor gerente</p>
+                      </div>
+                    </div>
+                    ${data.otroInstructorImparte ? `
+                      <div class="person">
+                        <div class="avatar soft">${getInitials(data.instTransversal || "Instructor")}</div>
+                        <div>
+                          <p class="pname" id="instTransversal">${escapeHTML(data.instTransversal || "--")}</p>
+                          <p class="prole">Instructor competencia</p>
+                        </div>
+                      </div>` : `
+                      <div class="person">
+                        <div class="avatar soft">${getInitials(data.instTransversal || "Instructor")}</div>
+                        <div>
+                          <p class="pname" id="instTransversal">${escapeHTML(data.instTransversal || "--")}</p>
+                          <p class="prole">Instructor competencia</p>
+                        </div>
+                      </div>`}
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <div class="left">
+                    <span class="icon">⚙️</span>
+                    <div>
+                      <h2>Roles asignados</h2>
+                      <p class="muted">Actores clave</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-b">
+                  <div class="person">
+                    <div class="avatar soft">${getInitials(data.aprProtocolante || "AP")}</div>
+                    <div>
+                      <p class="pname" id="aprProtocolante">${escapeHTML(data.aprProtocolante || "--")}</p>
+                      <p class="prole">Aprendiz protocolante</p>
+                    </div>
+                  </div>
+                  <div class="taglist">
+                    ${asistenciasHtml}
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h">
+                  <div class="left">
+                    <span class="icon">⚠️</span>
+                    <div>
+                      <h2>Reporte de inasistencias</h2>
+                      <p class="muted">Aprendices que faltaron</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-b">
+                  <div class="absence-grid" id="nombresFaltaron">
+                    ${absenceHtml}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="right-column">
+              <div class="card panel-card">
+                <div class="card-h">
+                  <div class="left">
+                    <span class="icon">📅</span>
+                    <div>
+                      <h2>${escapeHTML(fechaCorta)}</h2>
+                      <p class="sub">${escapeHTML(fechaLarga)}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel-body">
+                  <div class="panel-row">
+                    <span>Horario</span>
+                    <strong>${escapeHTML(horaRange)}</strong>
+                    <small class="muted">Tiempo estimado</small>
+                  </div>
+                  <div class="panel-row">
+                    <span>Ubicación</span>
+                    <strong>${escapeHTML(ubicacion)}</strong>
+                    <small class="muted">Ambiente registrado</small>
+                  </div>
+                  <div class="panel-row">
+                    <span>Evidencia fotográfica</span>
+                    <strong>${evidenciaCount} imágenes</strong>
+                  </div>
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      body.innerHTML = mainHtml;
+      const fichaLabel = $("headerFicha");
+      const estadoLabel = $("headerEstado");
+      if(fichaLabel){
+        fichaLabel.textContent = `Ficha ${ficha}`;
+      }
+      if(estadoLabel){
+        estadoLabel.textContent = estado;
+        if(estado && estado.toLowerCase().includes("ejecut")){
+          estadoLabel.style.background = "#F0FDF4";
+          estadoLabel.style.color = "#39A917";
+          estadoLabel.style.borderColor = "#BEE7C0";
+        } else {
+          estadoLabel.style.background = "#FEF2F2";
+          estadoLabel.style.color = "#C4413E";
+          estadoLabel.style.borderColor = "#FECACA";
+        }
+      }
+    }
+
+    // ===== Estado =====
+    let datosIniciales = null;
+
+    // ===== Asistentes adicionales (login) =====
+    function addAsistenteItem(value = {nombre:"", cargo:""}){
+      const wrap = document.createElement("div");
+      wrap.className = "assist-item";
+
+      const inpNombre = document.createElement("input");
+      inpNombre.type = "text";
+      inpNombre.placeholder = "Nombre";
+      inpNombre.value = value.nombre || "";
+      inpNombre.dataset.field = "nombre";
+
+      const inpCargo = document.createElement("input");
+      inpCargo.type = "text";
+      inpCargo.placeholder = "Cargo";
+      inpCargo.value = value.cargo || "";
+      inpCargo.dataset.field = "cargo";
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = "Eliminar";
+      btn.addEventListener("click", () => wrap.remove());
+
+      wrap.appendChild(inpNombre);
+      wrap.appendChild(inpCargo);
+      wrap.appendChild(btn);
+
+      $("assistItems").appendChild(wrap);
+      inpNombre.focus();
+
+      const enforceUpper = (input) => {
+        input.addEventListener("input", () => {
+          const start = input.selectionStart;
+          const end = input.selectionEnd;
+          input.value = (input.value || "").toUpperCase();
+          if(typeof start === "number" && typeof end === "number"){
+            input.setSelectionRange(start, end);
+          }
+        });
+      };
+      enforceUpper(inpNombre);
+      enforceUpper(inpCargo);
+    }
+
+    function setAsistenteBoxVisible(visible){
+      $("asistenteBox").style.display = visible ? "block" : "none";
+      if(visible && $("assistItems").children.length === 0){
+        addAsistenteItem();
+      }
+    }
+
+    document.querySelectorAll('input[name="huboAsistente"]').forEach(r => {
+      r.addEventListener("change", () => {
+        const v = document.querySelector('input[name="huboAsistente"]:checked')?.value;
+        setAsistenteBoxVisible(v === "si");
+      });
+    });
+
+    $("btnAgregarAsistente").addEventListener("click", () => addAsistenteItem());
+    $("btnLimpiarAsistentes").addEventListener("click", () => { $("assistItems").innerHTML = ""; addAsistenteItem(); });
+
+    // ===== Form inicial =====
+    $("btnLimpiar").addEventListener("click", () => {
+      $("formInicial").reset();
+      $("ciudad").value = "IBAGUÉ";
+      $("chkOtroInstructor").checked = false;
+      syncInstTransversal();
+      $("assistItems").innerHTML = "";
+      setAsistenteBoxVisible(false);
+      $("msgError").style.display = "none";
+      syncCantFaltaron();
+    });
+
+    function syncCantFaltaron(){
+      const lines = ($("nombresFaltaron").value || "")
+        .split(/\r?\n/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      $("cantFaltaron").value = String(lines.length);
+    }
+
+    $("nombresFaltaron").addEventListener("input", syncCantFaltaron);
+
+
+    function syncInstTransversal(){
+      const chk = $("chkOtroInstructor");
+      const it = $("instTransversal");
+      const gerente = $("instGerente");
+      if(!chk || !it || !gerente) return;
+
+      if(chk.checked){
+        it.disabled = false;
+      } else {
+        it.value = (gerente.value || "").trim();
+        it.disabled = true;
+      }
+    }
+
+    $("chkOtroInstructor").addEventListener("change", syncInstTransversal);
+    $("instGerente").addEventListener("input", () => {
+      if(!$("chkOtroInstructor").checked){
+        $("instTransversal").value = ($("instGerente").value || "").trim();
+      }
+    });
+
+    // Inicializa el valor (por defecto, se toma del Instructor Gerente)
+    syncInstTransversal();
+
+
+    function fileToDataURL(file){
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function resizeImageFileToDataURL(file, targetW, targetH, opts){
+      const o = Object.assign({ quality: 0.82, fit: "cover", background: "#ffffff" }, (opts || {}));
+      // Decodifica la imagen (sin librerías externas)
+      let bitmap = null;
+      if(window.createImageBitmap){
+        try{ bitmap = await createImageBitmap(file); } catch(e){ bitmap = null; }
+      }
+      if(!bitmap){
+        const url = URL.createObjectURL(file);
+        try{
+          bitmap = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = url;
+          });
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      }
+
+      const sw = bitmap.width || bitmap.naturalWidth || 0;
+      const sh = bitmap.height || bitmap.naturalHeight || 0;
+      if(!sw || !sh) throw new Error("No fue posible leer el tamaño de la imagen.");
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext("2d");
+
+      // Fondo (útil porque convertimos a JPG)
+      ctx.fillStyle = o.background;
+      ctx.fillRect(0, 0, targetW, targetH);
+
+      const scale = (o.fit === "contain")
+        ? Math.min(targetW / sw, targetH / sh)
+        : Math.max(targetW / sw, targetH / sh);
+
+      const dw = sw * scale;
+      const dh = sh * scale;
+      const dx = (targetW - dw) / 2;
+      const dy = (targetH - dh) / 2;
+
+      ctx.drawImage(bitmap, dx, dy, dw, dh);
+
+      // JPG reduce peso de forma importante (especialmente para fotos)
+      return canvas.toDataURL("image/jpeg", o.quality);
+    }
+
+    async function readFilesAsDataURLs(fileList){
+      const files = Array.from(fileList || []).filter(Boolean);
+      if(files.length === 0) return [];
+
+      const jobs = files.map(async (file) => {
+        // Si no es imagen, lo leemos tal cual (aunque el input está limitado a image/*)
+        const isImage = (file.type || "").startsWith("image/");
+        try{
+          const dataUrl = isImage
+            ? await resizeImageFileToDataURL(file, 340, 227, { quality: 0.82, fit: "cover" })
+            : await fileToDataURL(file);
+          return { name: file.name, dataUrl: dataUrl || "" };
+        } catch(err){
+          console.warn("No se pudo redimensionar:", file?.name, err);
+          const fallback = await fileToDataURL(file);
+          return { name: file.name, dataUrl: fallback || "" };
+        }
+      });
+
+      const arr = await Promise.all(jobs);
+      return arr.filter(x => x.dataUrl);
+    }
+
+    $("formInicial").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const huboAsistente = (document.querySelector('input[name="huboAsistente"]:checked')?.value || "no") === "si";
+      const asistentes = huboAsistente ? getAsistentesAdicionales() : [];
+
+      const anexosFotos = await readFilesAsDataURLs($("anexoFotos").files);
+
+      const data = {
+        programaFormacion: $("programaFormacion").value.trim(),
+        numFicha: $("numFicha").value.trim(),
+        instGerente: $("instGerente").value.trim(),
+        otroInstructorImparte: $("chkOtroInstructor").checked,
+        instTransversal: $("instTransversal").value.trim(),
+        aprMatriculados: $("aprMatriculados").value,
+        competencia: $("competencia").value.trim(),
+        fecha: $("fecha").value,
+        horaInicio: $("horaInicio").value,
+        horaFin: $("horaFin").value,
+        ciudad: $("ciudad").value.trim(),
+        ambienteFormacion: $("ambienteFormacion").value.trim(),
+        temaPrincipal: $("temaPrincipal").value.trim(),
+        aprProtocolante: $("aprProtocolante").value.trim(),
+        cantFaltaron: $("cantFaltaron").value,
+        nombresFaltaron: $("nombresFaltaron").value.trim(),
+        huboAsistente,
+        asistentesAdicionales: asistentes,
+        anexosFotos
+      };
+
+      // Validación mínima (campos requeridos)
+      const ok = data.programaFormacion
+        && data.numFicha
+        && data.instGerente
+        && (!data.otroInstructorImparte || data.instTransversal)
+        && data.competencia
+        && data.temaPrincipal
+        && data.ambienteFormacion
+        && data.fecha
+        && data.horaInicio
+        && data.horaFin
+        && data.aprProtocolante
+        && (!data.huboAsistente || (data.asistentesAdicionales && data.asistentesAdicionales.length > 0));
+
+      if(!ok){
+        $("msgError").style.display = "block";
+        $("msgError").textContent = data.huboAsistente
+          ? "Por favor complete los campos obligatorios. Si hubo asistente, agregue al menos un nombre y cargo."
+          : "Por favor complete los campos obligatorios marcados.";
+        return;
+      }
+      $("msgError").style.display = "none";
+
+      datosIniciales = data;
+      renderResumen(datosIniciales);
+
+      $("loginOverlay").style.display = "none";
+      $("app").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // ===== Acordeón =====
+    $("toggleAcordeon").addEventListener("click", () => {
+      const body = $("bodyAcordeon");
+      const icon = $("iconAcordeon");
+      const open = body.classList.toggle("open");
+      icon.textContent = open ? "▾" : "▸";
+    });
+
+    // ===== Compromisos adicionales dinámicos =====
+    function addExtraItem(value = ""){
+      const wrap = document.createElement("div");
+      wrap.className = "extra-item";
+
+      const ta = document.createElement("textarea");
+      ta.className = "textarea";
+      ta.style.minHeight = "52px";
+      ta.placeholder = "Escriba un compromiso adicional...";
+      ta.value = value;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btnMini";
+      btn.textContent = "Eliminar";
+      btn.addEventListener("click", () => wrap.remove());
+
+      wrap.appendChild(ta);
+      wrap.appendChild(btn);
+
+      $("extraItems").appendChild(wrap);
+      ta.focus();
+    }
+
+    $("btnAgregarCompromiso").addEventListener("click", () => addExtraItem());
+    $("btnLimpiarCompromisos").addEventListener("click", () => { $("extraItems").innerHTML = ""; });
+
+    // ===== Editar datos iniciales =====
+    $("btnEditarDatos").addEventListener("click", () => {
+      if(!datosIniciales) return;
+
+      $("programaFormacion").value = datosIniciales.programaFormacion || "";
+      $("numFicha").value = datosIniciales.numFicha || "";
+      $("instGerente").value = datosIniciales.instGerente || "";
+      $("instTransversal").value = datosIniciales.instTransversal || "";
+      $("aprMatriculados").value = datosIniciales.aprMatriculados || "";
+      $("competencia").value = datosIniciales.competencia || "";
+      $("fecha").value = datosIniciales.fecha || "";
+      $("horaInicio").value = datosIniciales.horaInicio || "";
+      $("horaFin").value = datosIniciales.horaFin || "";
+      $("ciudad").value = (datosIniciales.ciudad ?? "") !== "" ? datosIniciales.ciudad : "";
+      $("ambienteFormacion").value = datosIniciales.ambienteFormacion || "";
+      $("temaPrincipal").value = datosIniciales.temaPrincipal || "";
+      $("aprProtocolante").value = datosIniciales.aprProtocolante || "";
+      $("cantFaltaron").value = datosIniciales.cantFaltaron || "";
+      $("nombresFaltaron").value = datosIniciales.nombresFaltaron || "";
+      syncCantFaltaron();
+
+      // Asistentes
+      const hubo = !!datosIniciales.huboAsistente;
+      document.querySelector(`input[name="huboAsistente"][value="${hubo ? "si" : "no"}"]`).checked = true;
+      $("assistItems").innerHTML = "";
+      if(hubo){
+        setAsistenteBoxVisible(true);
+        (datosIniciales.asistentesAdicionales || []).forEach(a => addAsistenteItem(a));
+        if(($("assistItems").children.length === 0)) addAsistenteItem();
+      }else{
+        setAsistenteBoxVisible(false);
+      }
+
+      // Anexos: por seguridad del navegador NO se puede precargar un input type="file".
+      // Se conserva lo ya guardado en memoria para el Word.
+      $("msgError").style.display = "none";
+
+      $("loginOverlay").style.display = "flex";
+      $("app").style.display = "none";
+    });
+
+    // ===== Exportar acta a Word =====
+    function buildWordHtml(d){
+      const safe = (value) => {
+        if(value === null || value === undefined) return "";
+        const text = typeof value === "string" ? value.trim() : String(value);
+        return escapeHTML(text);
+      };
+      const upper = (value) => safe(value).toUpperCase();
+      const toMultiline = (value, fallback = "&nbsp;") => {
+        const text = safe(value);
+        if(!text) return fallback;
+        return text.replace(/\n/g, "<br>");
+      };
+      const nombrePrograma = upper(d.programaFormacion);
+      const codigoFicha = safe(d.numFicha);
+      const ciudad = upper((d.ciudad || "IBAGUÉ").trim());
+      const fechaHoy = formatFechaLarga(d.fecha);
+      const horaInicio = formatHora(d.horaInicio);
+      const horaFin = formatHora(d.horaFin);
+      const instGerente = upper((d.instGerente || "").trim());
+      const instTransversal = upper((d.instTransversal || "").trim());
+      const aprProtocolante = upper(d.aprProtocolante || "");
+      const competencia = upper(d.competencia);
+      const ambiente = upper(d.ambienteFormacion || "");
+      const instructorGerente = instGerente;
+      const codigoActa = buildActaTimestamp(d);
+      const senaLogoUrl = "https://i.ibb.co/VpwBHTrw/Logosimbolo-SENA-PRINCIPAL-1.png";
+      const coordinadorAcademico = safe(d.coordinadorAcademico || "");
+      const aprendizVocero = safe(d.aprendizVocero || "");
+      const temaPrincipal = upper(d.temaPrincipal || "");
+      const extraCompromisos = (d.extraCompromisos || []).filter(Boolean);
+      const aprMatriculadosRaw = (d.aprMatriculados || "").toString().trim();
+      const cantFaltaronRaw = (d.cantFaltaron || "").toString().trim();
+      const aprMatriculadosNum = aprMatriculadosRaw === "" ? NaN : Number(aprMatriculadosRaw);
+      const cantFaltaronNum = cantFaltaronRaw === "" ? NaN : Number(cantFaltaronRaw);
+      const asistentesPresentesValue =
+        Number.isFinite(aprMatriculadosNum) && Number.isFinite(cantFaltaronNum)
+          ? aprMatriculadosNum - cantFaltaronNum
+          : null;
+      const asistentesPresentesDisplay = Number.isFinite(asistentesPresentesValue)
+        ? asistentesPresentesValue
+        : "-";
+      const aprMatriculadosDisplay = aprMatriculadosRaw || "-";
+      const cantFaltaronDisplay = cantFaltaronRaw || "-";
+      const reflexHtml = toMultiline(d.reflexionInicial);
+      const actividadesHtml = toMultiline(d.actividadesDesarrolladas);
+      const conclusionesHtml = toMultiline(d.conclusiones);
+      const nombresFaltaronList = (d.nombresFaltaron || "")
+        .split(/\r?\n/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      const nombresFaltaronSorted = [...nombresFaltaronList].sort((a, b) =>
+        a.localeCompare(b, "es", { sensitivity: "base" })
+      );
+      const nombresFaltaronHtml = nombresFaltaronSorted.length
+        ? nombresFaltaronSorted.map(escapeHTML).join(", ")
+        : "-";
+      const anexos = (d.anexosFotos || [])
+        .filter(f => f && f.dataUrl)
+        .map((f, idx) => {
+          const label = escapeHTML(f.name || `Foto ${idx + 1}`);
+          return `<div class="attachment"><div class="attachment-name">${label}</div><img src="${f.dataUrl}" alt="${label}" width="12cm" height="8cm" style="width:12cm; height:8cm; mso-width-source:userset; mso-width-alt:4320000; mso-height-source:userset; mso-height-alt:2880000; object-fit:cover; display:block; margin:0 auto;" /></div>`;
+        });
+      const anexosHtml = anexos.length
+        ? `<div class="section-title" style="margin-top:18px;">Anexos fotográficos</div><div class="attachments">${anexos.join("")}</div>`
+        : `<div class="section-title" style="margin-top:18px;">Anexos fotográficos</div><p>Sin anexos fotográficos.</p>`;
+      const responsableCompromisos = `Aprendices Ficha ${codigoFicha || "&nbsp;"}`;
+      const compromisosBase = [
+        "Presentación personal: Portar de forma decorosa el uniforme según horario establecido.",
+        "Ambientes de formación: Conservar y mantener en buen estado, orden y aseo los ambientes de formación.",
+        "Aseo personal: Presentar siempre las mejores condiciones de aseo y pulcritud personal.",
+        "Expresiones: No usar expresiones grotescas en cualquier actividad y manifestar respeto.",
+        "Cumplimientos: Cumplir con los trabajos asignados por los instructores y enviarlos puntualmente.",
+        "Cursos: Realizar los cursos de emprendimiento y de habilidades digitales (obligatorios para culminar la formación).",
+        "Ahorro de energía: a. No encender los equipos de cómputo sin que se esté desarrollando alguna actividad que lo requiera. b. No encender el aire acondicionado si no se requiere. c. No cargar los celulares en los ambientes de formación. d. No dejar conectados los computadores a la corriente si no se requiere carga o no esté en uso. e. No dejar encendidas las luces del ambiente en el tiempo destinado para el (los) break."
+      ];
+      const compromisosBaseRowsHtml = compromisosBase
+        .map(txt => `
+          <tr>
+            <td colspan="10" style="height:28px;">${escapeHTML(txt)}</td>
+            <td colspan="2" style="height:28px; text-align:center;">${fechaHoy || "&nbsp;"}</td>
+            <td colspan="5" style="height:28px;">${responsableCompromisos}</td>
+            <td colspan="3" style="height:28px;"></td>
+          </tr>
+        `)
+        .join("");
+      const compromisosAdicionalesRowsHtml = extraCompromisos.length
+        ? extraCompromisos
+            .map(txt => `
+              <tr>
+                <td colspan="10" style="height:28px;">${escapeHTML(txt)}</td>
+                <td colspan="2" style="height:28px; text-align:center;">${fechaHoy || "&nbsp;"}</td>
+                <td colspan="5" style="height:28px;">${responsableCompromisos}</td>
+                <td colspan="3" style="height:28px;"></td>
+              </tr>
+            `)
+            .join("")
+        : `
+          <tr>
+            <td colspan="10" style="height:28px;">Sin compromisos diarios adicionales.</td>
+            <td colspan="2" style="height:28px; text-align:center;">${fechaHoy || "&nbsp;"}</td>
+            <td colspan="5" style="height:28px;">${responsableCompromisos}</td>
+            <td colspan="3" style="height:28px;"></td>
+          </tr>
+        `;
+      const compromisosTablaHtml = `
+        ${compromisosBaseRowsHtml}
+        <tr>
+          <td colspan="20" style="text-align:left; font-weight:700; background:#f3f4f6;">
+            Compromisos diarios adicionales (opcional)
+          </td>
+        </tr>
+        ${compromisosAdicionalesRowsHtml}
+      `;
+      const asistentesAdicionales = (d.asistentesAdicionales || [])
+        .filter(a => a && (a.nombre || a.cargo));
+      const aprendizRow = `
+        <tr>
+          <td colspan="5" style="padding:8px; font-weight:700; width:25%;" id="aprProtocolante">${aprProtocolante || "&nbsp;"}</td>
+          <td colspan="4" style="padding:8px; border:1px solid #000; width:20%;">APRENDIZ PROTOCOLANTE</td>
+          <td colspan="2" style="border:1px solid #000;"></td>
+          <td colspan="5" style="border:1px solid #000; width:25%;"></td>
+          <td colspan="4" style="border:1px solid #000; width:20%;"></td>
+        </tr>
+      `;
+      const instructorRow = `
+        <tr>
+          <td colspan="5" style="padding:8px; font-weight:700; width:25%;" id="instTransversal">${instTransversal || "&nbsp;"}</td>
+          <td colspan="4" style="padding:8px; border:1px solid #000; width:20%;">INSTRUCTOR DE LA COMPETENCIA</td>
+          <td colspan="2" style="border:1px solid #000;"></td>
+          <td colspan="5" style="border:1px solid #000; width:25%;"></td>
+          <td colspan="4" style="border:1px solid #000; width:20%;"></td>
+        </tr>
+      `;
+      const asistentesBaseRows = `${aprendizRow}${instructorRow}`;
+      const asistentesAdicionalesRows = asistentesAdicionales
+        .map(a => {
+          const nombre = (a.nombre || "");
+          const cargo = (a.cargo || "");
+          return `
+            <tr class="assist-item">
+            <td colspan="5" style="padding:8px; font-weight:700; width:25%;">${upper(nombre) || "&nbsp;"}</td>
+            <td colspan="4" style="padding:8px; border:1px solid #000; width:20%;">${upper(cargo) || "&nbsp;"}</td>
+            <td colspan="2" style="border:1px solid #000;"></td>
+            <td colspan="5" style="border:1px solid #000;"></td>
+            <td colspan="4" style="border:1px solid #000;"></td>
+            </tr>
+          `;
+        })
+        .join("");
+      const asistentesRowsHtml = `${asistentesBaseRows}${asistentesAdicionalesRows}`;
+      const asistentesPresenteSuffix = Number.isFinite(asistentesPresentesValue)
+        ? ` = ${asistentesPresentesDisplay}`
+        : "";
+      const contenidoHTML = `
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+  <head>
+    <meta charset="utf-8">
+    <title>Acta Comité</title>
+
+    
+
+    <style>
+      @page Section1 {
+        margin-top: 20mm;
+        margin-right: 15mm;
+        margin-bottom: 20mm;
+        margin-left: 15mm;
+        mso-header: h1;
+        mso-header-margin: 10mm;
+        mso-footer: f1;
+        mso-footer-margin: 10mm;
+        mso-title-page: no;
+        mso-paper-source: 0;
+      }
+      div.Section1 { page:Section1; }
+      body {
+        font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 10pt;
+      }
+      table.acta-encabezado {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table.acta-encabezado,
+      table.acta-encabezado td {
+        border: 1px solid #000;
+      }
+      table.acta-encabezado td {
+        padding: 6px 8px;
+        font-size: 9pt;
+        vertical-align: top;
+      }
+      .Section1 table {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .lista-acta {
+        margin: 0;
+        list-style-position: outside;
+        padding-left: 18px;
+      }
+      .titulo-1 {
+        font-weight: bold;
+        font-size: 12pt;
+        margin: 8px 0 4px;
+      }
+      .contenido-item {
+        font-size: 10pt;
+        margin: 4px 0 8px;
+        padding-left: 12pt;
+        font-weight: normal;
+      }
+      /* Mayúsculas para campos requeridos */
+      #programaFormacion,
+      #competencia,
+      #instGerente,
+      #instTransversal,
+      #ciudad,
+      #ambienteFormacion,
+      #aprProtocolante,
+      .assist-item {
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #00324D;
+        letter-spacing: .04em;
+      }
+      .acta-titulo {
+        text-align: center;
+        font-weight: bold;
+      }
+      p.MsoHeader, p.MsoFooter {
+        text-align: center;
+        font-size: 8pt;
+        margin: 0;
+        font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      .tabla-compromisos {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+      }
+      .tabla-compromisos td {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 9pt;
+      }
+      .tabla-maestra {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        mso-table-layout-alt: fixed;
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+        border: 1px solid #000;
+      }
+      .tabla-maestra td,
+      .tabla-maestra th {
+        border: 1px solid #000;
+        padding: 6px;
+      }
+      .tabla-maestra th {
+        background: #f3f4f6;
+        font-weight: bold;
+        text-align: center;
+      }
+      .attachments {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .attachment {
+        border: 1px solid #bbb;
+        padding: 8px;
+        margin-top: 12px;
+        background: #fff;
+        width: 100%;
+      }
+      .attachment-name {
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+      .attachment img {
+        width: 9cm;
+        max-width: 100%;
+        height: 6cm;
+        border: 1px solid #bbb;
+        display: block;
+        margin: 0 auto;
+      }
+      @media print {
+  @page { size: Letter; margin: 20mm 15mm 20mm 15mm; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; margin-top: 30mm; margin-bottom: 20mm; }
+  #h1 { position: fixed; top: 0; left: 0; right: 0; }
+  #f1 { position: fixed; bottom: 0; left: 0; right: 0; }
+        .attachments { display: block; }
+        .attachment {
+          display: inline-block;
+          vertical-align: top;
+          width: 32%;
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        .attachment img {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+      }
+
+      #programaFormacion,
+      #numFicha,
+      #instGerente,
+      #instTransversal,
+      #competencia,
+      #ambienteFormacion,
+      #ciudad,
+      #temaPrincipal,
+      #aprProtocolante,
+      #nombresFaltaron {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #00324D;
+      }
+      .assist-item td {
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #00324D;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="Section1">
+      <table class="tabla-maestra">
+        <tr>
+          <td class="acta-titulo" colspan="20">ACTA No. ${codigoActa}</td>
+        </tr>
+        <tr>
+          <td colspan="20">
+            <strong>NOMBRE DEL COMITÉ O DE LA REUNIÓN:</strong><br>
+            Protocolo de sesión del Programa de formación
+            <span id="programaFormacion">${nombrePrograma || "&nbsp;"}</span>
+            No. Ficha <span id="numFicha">${codigoFicha || "&nbsp;"}</span><br>
+            Instructor gerente <span id="instGerente">${instructorGerente || "&nbsp;"}</span><br>
+            Competencia <span id="competencia">${competencia || "&nbsp;"}</span><br>
+            Impartida por el Instructor <span id="instTransversal">${safe(instTransversal) || "&nbsp;"}</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5"><strong>CIUDAD Y FECHA:</strong></td>
+          <td colspan="5">
+            <span id="ciudad">${ciudad || "&nbsp;"}</span>,<br>
+            <span style="font-weight:bold; color:#00324D;">${fechaHoy}</span>
+          </td>
+          <td colspan="5">
+            <strong>HORA INICIO:</strong><br>
+            <span style="font-weight:bold; color:#00324D;">${horaInicio}</span>
+          </td>
+          <td colspan="5">
+            <strong>HORA FIN:</strong><br>
+            <span style="font-weight:bold; color:#00324D;">${horaFin}</span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5"><strong>LUGAR Y/O ENLACE:</strong></td>
+          <td colspan="5"><span id="ambienteFormacion">${ambiente || "&nbsp;"}</span></td>
+          <td colspan="10">
+            <strong>COMERCIO Y SERVICIOS</strong><br>
+            <strong>SENA REGIONAL TOLIMA</strong>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="20">
+            <strong>AGENDA O PUNTOS PARA DESARROLLAR:</strong>
+            <ol class="lista-acta">
+              <li>Saludo</li>
+              <li>Reflexión o activador</li>
+              <li>Asistencia</li>
+              <li>Desarrollo de la sesión</li>
+              <li>Conclusión</li>
+              <li>Compromisos</li>
+            </ol>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="20">
+            <strong>OBJETIVO(S) DE LA REUNIÓN:</strong><br>
+            Desarrollar formación profesional integral para el Programa de formación
+            <span style="font-weight:bold;">${nombrePrograma || "&nbsp;"}</span>
+            No. Ficha <span style="font-weight:bold;">${codigoFicha || "&nbsp;"}</span>,
+            para adelantos de la guía correspondiente a la competencia <span style="font-weight:bold;">${competencia || "&nbsp;"}</span>,
+            tema principal: <span id="temaPrincipal">${temaPrincipal || "&nbsp;"}</span>.
+          </td>
+        </tr>
+        <tr>
+          <td colspan="20" class="acta-titulo">DESARROLLO DE LA REUNIÓN</td>
+        </tr>
+        <tr>
+          <td colspan="20">
+            <ol class="lista-acta">
+              <li class="titulo-1">
+                Saludo
+                <div class="contenido-item" style="font-style:italic;">
+                  (Saludo por parte del instructor)
+                </div>
+              </li>
+              <li class="titulo-1">
+                Reflexión o activador
+                <div class="contenido-item" id="reflexionInicial">
+                  ${reflexHtml}
+                </div>
+              </li>
+              <li class="titulo-1">
+                Asistencia
+                <div class="contenido-item">
+                  <div style="margin-bottom:4px;">
+                    Cantidad Aprendices Asistentes  ${asistentesPresenteSuffix}
+                  </div>
+                  <div style="margin-bottom:4px;">Cantidad de Aprendices que fallaron ${cantFaltaronDisplay}</div>
+                  <div>Nombre de aprendices que faltaron</div>
+                 <div id="nombresFaltaron">${nombresFaltaronHtml}</div>
+
+                </div>
+              </li>
+              <li class="titulo-1">
+                Desarrollo de la sesión
+                <div class="contenido-item" id="actividadesDesarrolladas">
+                  ${actividadesHtml}
+                </div>
+              </li>
+            </ol>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="20" class="acta-titulo">CONCLUSIONES</td>
+        </tr>
+        <tr>
+          <td colspan="20" style="height:120px; vertical-align:top;"><div class="contenido-item" id="conclusiones">${conclusionesHtml}</div></td>
+        </tr>
+              <tr>
+                  <td colspan="20" style="text-align:center; font-weight:700; background:#f3f4f6;">
+                    ESTABLECIMIENTO Y ACEPTACIÓN DE COMPROMISOS
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="10" style="font-weight:900; text-align:center;">ACTIVIDAD / DECISIÓN</td>
+                  <td colspan="2" style="font-weight:600; text-align:center;">FECHA</td>
+                  <td colspan="5" style="font-weight:300; text-align:center;">RESPONSABLE</td>
+                  <td colspan="3" style="font-weight:300; text-align:center; width:15%;">FIRMA O PARTICIPACIÓN VIRTUAL</td>
+                </tr>
+              ${compromisosTablaHtml}
+              <tr>
+                  <td colspan="20" style="text-align:center; font-weight:700; background:#f3f4f6;">
+                    DE: ASISTENTES Y APROBACIÓN DECISIONES
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="5" style="font-weight:700; text-align:center; width:25%;">NOMBRE</td>
+                  <td colspan="4" style="font-weight:700; text-align:center; width:20%;">DEPENDENCIA/ EMPRESA</td>
+                  <td colspan="2" style="font-weight:700; text-align:center; width:10%;">APRUEBA (SI/NO)</td>
+                  <td colspan="5" style="font-weight:700; text-align:center; width:25%;">OBSERVACIÓN</td>
+                  <td colspan="4" style="font-weight:700; text-align:center; width:20%;">FIRMA O PARTICIPACIÓN VIRTUAL</td>
+                </tr>
+              ${asistentesRowsHtml}
+              <tr>
+                  <td colspan="20" style="padding:8px; text-align:justify; font-size:9pt;">
+                    De acuerdo con La Ley 1581 de 2012, Protección de Datos Personales, el Servicio Nacional de Aprendizaje SENA, se compromete a garantizar la seguridad y protección de los datos personales que se encuentran almacenados en este documento.
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="20" style="padding:8px; text-align:center; font-weight:bold; ">
+                    ANEXOS
+                    ${anexosHtml}
+                  </td>
+                    <div style="mso-element:header" id="h1">
+        <p class="MsoHeader">
+          <img src="${senaLogoUrl}" alt="Logo SENA" style="height:24px; display:block; margin:0 auto;">
+        </p>
+      </div>
+      <div style="mso-element:footer" id="f1">
+        <p class="MsoFooter"><span style="font-size:9pt;">GOR-F-084V02</span></p>
+      </div>
+                </tr>
+              </table>
+ 
+</div>
+  </body>
+</html>`;
+      return contenidoHTML;
+    }
+
+
+    async function generarWordModelo(){
+      try{
+        const d = JSON.parse(JSON.stringify(datosIniciales || {}));
+        const extraComp = getExtraCompromisos();
+        d.extraCompromisos = extraComp;
+        // Captura los textos diligenciados en el acordeón (no vienen en datosIniciales)
+        d.reflexionInicial = ($("reflexionInicial")?.value || "").trim();
+        d.actividadesDesarrolladas = ($("actividadesDesarrolladas")?.value || "").trim();
+        d.conclusiones = ($("conclusiones")?.value || "").trim();
+        const html = buildWordHtml(d);
+        const blob = new Blob([html], { type: "application/msword" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${buildExportBaseName(d)}.doc`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1200);
+      } catch(err){
+        console.error(err);
+        alert("Ocurrió un error al exportar el acta. Revise la consola para más detalle.");
+      }
+    
+    
+}
+
+
+    function generarPdfModelo(){
+      try{
+        const d = JSON.parse(JSON.stringify(datosIniciales || {}));
+        const extraComp = getExtraCompromisos();
+        d.extraCompromisos = extraComp;
+        d.reflexionInicial = ($("reflexionInicial")?.value || "").trim();
+        d.actividadesDesarrolladas = ($("actividadesDesarrolladas")?.value || "").trim();
+        d.conclusiones = ($("conclusiones")?.value || "").trim();
+
+        const html = buildWordHtml(d);
+        const pdfName = buildExportBaseName(d);
+
+        // Opción robusta sin librerías: abrir una pestaña y usar "Imprimir" → "Guardar como PDF"
+        const w = window.open("", "_blank");
+        if(!w){
+          alert("El navegador bloqueó la ventana emergente. Habilite ventanas emergentes para este sitio y reintente.");
+          return;
+        }
+
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        w.document.title = `${pdfName}.pdf`;
+
+        const imgs = Array.from(w.document.images || []);
+        const waitImgs = imgs.map(img => img.complete
+          ? Promise.resolve()
+          : new Promise(res => { img.onload = img.onerror = () => res(); })
+        );
+
+        Promise.all(waitImgs).then(() => {
+          w.focus();
+          w.print();
+        });
+      } catch(err){
+        console.error(err);
+        alert("Ocurrió un error al generar el PDF. Revise la consola para más detalle.");
+      }
+    }
+
+    $("btnProtocolo").addEventListener("click", () => {
+      if(!datosIniciales){
+        alert("Primero diligencie los datos iniciales.");
+        return;
+      }
+      generarWordModelo();
+    });
+
+
+    $("btnProtocoloPDF").addEventListener("click", () => {
+      if(!datosIniciales){
+        alert("Primero diligencie los datos iniciales.");
+        return;
+      }
+      generarPdfModelo();
+    });
+
+
+    // Precarga fecha (hoy) y hora sugerida
+    (function init(){
+      const f = $("fecha");
+      if(f && !f.value){
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth()+1).padStart(2,"0");
+        const dd = String(now.getDate()).padStart(2,"0");
+        f.value = `${yyyy}-${mm}-${dd}`;
+      }
+
+      // Hora inicio/fin sugeridas
+      const hi = $("horaInicio");
+      const hf = $("horaFin");
+      if(hi && !hi.value){
+        hi.value = "07:00";
+      }
+      if(hf && !hf.value){
+        hf.value = "12:00";
+      }
+    })();
+  </script>
+</body>
+</html>
