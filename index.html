@@ -1688,13 +1688,19 @@
 
     function buildExportBaseName(d){
       const fichaPart = sanitizeForFileName(d?.numFicha, "FICHA");
+
+      // Fecha en formato yyyymmdd (ej: 20261231)
       const fechaRaw = (d?.fecha || "").replace(/[^0-9]/g, "");
       const now = new Date();
       const fallbackFecha = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}`;
-      const fechaPart = fechaRaw || fallbackFecha;
+      const fechaPart = (fechaRaw && fechaRaw.length >= 8) ? fechaRaw.slice(0, 8) : fallbackFecha;
+
+      // Nombre del aprendiz protocolante (se conserva con espacios)
       let protocoloPart = sanitizeForFileName(d?.aprProtocolante || "APRENDIZ PROTOCOLANTE", "APRENDIZ_PROTOCOLANTE");
       protocoloPart = protocoloPart.replace(/_/g, " ").trim() || "APRENDIZ PROTOCOLANTE";
-      return `PS_${fichaPart}_${fechaPart}_${protocoloPart}`;
+
+      // Formato requerido: PS_<FECHA>__<FICHA>_<APRENDIZ PROTOCOLANTE>
+      return `PS_${fechaPart}__${fichaPart}_${protocoloPart}`;
     }
 
     function renderResumen(data){
